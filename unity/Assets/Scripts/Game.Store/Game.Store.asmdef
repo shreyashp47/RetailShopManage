@@ -1,0 +1,17 @@
+{
+    "name": "Game.Store",
+    "rootNamespace": "Game.Store",
+    "references": [
+        "Game.Core",
+        "Game.Economy"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
