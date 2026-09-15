@@ -17,9 +17,9 @@
 | **Offline-first, 8h cap, sync never blocks** | `AGENT.md:24` / `RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:296` | CHUNK 8 local JSON primary, Firebase optional |
 | **NFR: 60fps SD660 3GB, AAB <100MB, <5s cold, <10%/h, crash-free >99.5%** | `AGENT.md:25` / `RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:172` | Every chunk has perf exit gate |
 
-**Locked stack for MVP** (`AGENT.md:13`): Unity **2022.3.67f2 URP**, C#10, Addressables, UGUI/UI Toolkit, DOTween, Cinemachine, NavMesh, Blender+Mixamo. Backend: Firebase/PlayFab (never blocks). Never Flutter.
+**Locked stack for MVP** (`AGENT.md:13`): Unity **2022.3.67f2 URP**, C#10, Addressables, UGUI/UI Toolkit, DOTween, Cinemachine, NavMesh, Blender+Mixamo. Backend: Firebase/PlayFab (never blocks). Never Flutter. **Ads SDK: NONE — no MAX/LevelPlay/AdMob** (owner decision 15 Sep 2026 confirmed).
 
-**Open Decisions §16** (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:559`): Lane=Hybrid active→idle (Rec), Currency=1+rep, Style=low-poly, Ads=rewarded-only or no-ads V1, Engine=Unity, Subscription=skip v1, Theme=generic MVP → kirana/konbini Tier5/event. ⏸ Close before spec; CHUNK 0.6 is decision gate.
+**Open Decisions §16** (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:559`): Lane=Hybrid active→idle (Rec), Currency=1+rep, Style=low-poly, **Ads=NONE (no ads library)**, Engine=Unity, Subscription=skip v1, Theme=generic MVP → kirana/konbini Tier5/event. ⏸ Close before spec; CHUNK 0.6 is decision gate.
 
 ---
 
@@ -43,10 +43,10 @@ Basis order: **0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10** 
 
 - [ ] **0.1** Create Unity 2022.3.67f2 URP project `RetailManage` at `/Users/shreyash/RetailManage/unity` — verify `com.google.firebase.crashlytics.unity_version 2022.3.67f2` match from `CODE_ANALYSIS_REVERSE_ENGINEERING.md:25`
 - [ ] **0.2** Git + LFS init (`.gitignore` Unity, `*.assets` LFS), `main` + `develop`, GitHub repo
-- [ ] **0.3** UPM packages: Addressables, Cinemachine, AI Navigation (NavMesh), TextMeshPro, DOTween/DOTweenPro, MyBox, LeanPool, Input System. Keep `Firebase 13.6.0` (App/Analytics/RemoteConfig/Crashlytics) from decompiled `ScriptingAssemblies.json:7`; **remove** `MaxSdk.Scripts/Adverty5/Odeeo/Gadsme/Audiomob` (saves ~30M native `CODE_ANALYSIS_REVERSE_ENGINEERING.md:104`)
+- [ ] **0.3** UPM packages: Addressables, Cinemachine, AI Navigation (NavMesh), TextMeshPro, DOTween/DOTweenPro, MyBox, LeanPool, Input System. Keep `Firebase 13.6.0` (App/Analytics/RemoteConfig/Crashlytics) from decompiled `ScriptingAssemblies.json:7`; **remove** `MaxSdk.Scripts/Adverty5/Odeeo/Gadsme/Audiomob` (saves ~30M native `CODE_ANALYSIS_REVERSE_ENGINEERING.md:104`) — **DO NOT add any ads SDK (MAX/LevelPlay/AdMob) — IAP only**
 - [ ] **0.4** Assembly Definitions: `Game.Core`, `Game.Economy`, `Game.Customer`, `Game.Store`, `Game.Save`, `Game.UI`, `Game.IAP`, `Game.Analytics` (as per `RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:422`)
 - [ ] **0.5** Scenes skeleton: `Bootstrap` (init+RemoteConfig fetch) → `Home` (map Tier1-5) → `StoreGameplay` (grid 6×6) → `Expand/Decor` → `Result/LevelUp` (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:422`)
-- [ ] **0.6** **Decision gate:** confirm §16 (hybrid, 1+rep, low-poly, Unity, no-ads V1 skip sub, generic MVP). Record in `DECISIONS.md`
+- [ ] **0.6** **Decision gate:** confirm §16 (hybrid, 1+rep, low-poly, Unity, **NO ADS library**, skip sub, generic MVP). Record in `DECISIONS.md` — lock `adsEnabled=false` permanent
 - [ ] **0.7** CI: GitHub Actions + Unity Cloud Build, AAB pipeline, Test Lab matrix (SD660/SD665 3GB, Android 7 target 34 per `RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:185`)
 - [ ] **0.8** NFR harness: FPS counter (`CodeStage.AFPSCounter`), 5s cold start timer, AAB size check <100MB core, battery profiler
 - [ ] **0.9** Copy reference docs locally (read-only): symlink `manageRetailShop/RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md`, `CODE_ANALYSIS_REVERSE_ENGINEERING.md`
@@ -83,7 +83,7 @@ Basis order: **0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10** 
 - [ ] **2.4** **Step4 Open/Close:** Store sign flip `Closed→Open` (bool). Spawning gated by it. Cinemachine orbit + DOTween sign bounce
 - [ ] **2.5** **Step5 Service:** Delegated to CHUNK 3, but wiring: `DayManager.Open()` → `CustomerSpawner.Start()` → `CheckoutQueue`
 - [ ] **2.6** **Step6 Checkout Mini-Game:** Player-as-cashier `Cash Register`/`Checkout Drawer`/`8_Checkout Coffee` (`CODE_ANALYSIS_REVERSE_ENGINEERING.md:60`). Basis: tap scan + cash change calc `Coin_5_Cents` packs. Speed bonus. Keep **manual flavor forever** even after staff
-- [ ] **2.7** **Step7 End-of-Day:** Close store → tally `profit = sales - cost - salary`, XP, `LevelUp` screen. `Gold_Upgrade` ref. Loop to Step1. Triggers LiveOps EOD interstitial gate (CHUNK 9: never mid-checkout)
+- [ ] **2.7** **Step7 End-of-Day:** Close store → tally `profit = sales - cost - salary`, XP, `LevelUp` screen. `Gold_Upgrade` ref. Loop to Step1. No interstitial — ads library not implemented (CHUNK 9 IAP only)
 - [ ] **2.8** `DayManager` FSM: `Preparation → Stocking → Pricing → Open → Checkout → EOD` (mermaid `RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:224`)
 
 **Exit:** 90-sec FTUE can run Steps 1-7 with 1 milk SKU, no staff, no crash. Basis loop is fun alone.
@@ -184,7 +184,7 @@ Basis order: **0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10** 
 - [ ] **8.1** Local save: JSON + PlayerPrefs primary (`Game.Save` `SaveMgr`). Schema: `player {coins,gems,stars,level,xp,prestigeTier}`, `store {tier,size,tiles,decor,checkouts,fridges}`, `empire {stores[]}`, `catalog {skus[]}`, `staff[]`, `progress {quests, loginStreak, lastOfflineAt, offlineCapHours:8}`, `settings {speed,music,haptics}` (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:431`)
 - [ ] **8.2** ScriptableObjects mirror: `SKUConfig`, `StaffConfig`, `DecorConfig`, `LevelConfig`, `CityConfig` (kirana/konbini future) — Remote Config can override `marketCost`
 - [ ] **8.3** Cloud: Play Games Cloud Save + PlayFab PlayerData mirror (optional, fetch on `Bootstrap`). Never block core loop if offline
-- [ ] **8.4** Offline earnings: on resume calc `min(now-lastOfflineAt,8h) × tierRate × starsMult` → Welcome Back popup, 2× via Rewarded (CHUNK 9)
+- [ ] **8.4** Offline earnings: on resume calc `min(now-lastOfflineAt,8h) × tierRate × starsMult` → Welcome Back popup (no Rewarded double — ads not implemented)
 - [ ] **8.5** Remote Config: Firebase Remote Config / PlayFab Config for `milk.marketCost`, `delivery_time`, `spawnRate`, `patience` (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:295`). A/B via Firebase A/B Testing
 - [ ] **8.6** Analytics: Firebase + GameAnalytics funnel `install→tutorial→L1→D1→D7→IAP→ad watch→churn` (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:494`)
 - [ ] **8.7** Crash: Crashlytics, `libFirebaseCppCrashlytics 46K` pattern, <0.5% sessions
@@ -193,19 +193,19 @@ Basis order: **0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10** 
 
 ---
 
-## CHUNK 9 — Monetization & LiveOps (FR-6)
-*Goal: No-ads V1 decision 15 Sep 2026 (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:452`): IAP only. If ads ever added, keep to rewarded/every-3rd-EOD never mid-checkout.*
+## CHUNK 9 — Monetization & LiveOps (FR-6) — IAP ONLY, NO ADS LIBRARY
+*Goal: Owner decision 15 Sep 2026 final: **NO ADS LIBRARY** — IAP/premium only. No MAX/LevelPlay/AdMob SDK, no rewarded/interstitial/banner code. Monetization = IAP bundles + cosmetics + premium unlock + season pass (skip v1).*
 *Deps: 4, 8. Blocks: 10*
 
-- [ ] **9.1** IAP catalog (Play Billing 8.3.0 `billing.properties:8` + `CodelessIAPStoreListener` pattern `CODE_ANALYSIS_REVERSE_ENGINEERING.md:29` but rebuild via Unity IAP): `Gems100 $0.99/₹89`, `Gems500 $4.99/₹449 +50 bonus`, `RestockBundle $1.99` (intent moment when shelf empty), `Starter Pack $1.99`, `No Ads $2.99` (future-proof), `Season Pass $4.99/mo` skip v1 (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:472`)
-- [ ] **9.2** Placements: IAP store + **bundled at intent moments** 30-40% better conversion (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:467`). Cosmetic-first 58% revenue lever → decor/photo mode (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:468`)
-- [ ] **9.3** Rewarded (if ads re-enabled post-V1): 3-5/day opt-in — Speed van, double coins 5 min, offline double (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:483`). Stub now, mediation MAX/LevelPlay later
-- [ ] **9.4** Interstitial rule: every 3rd EOD only, cap 1 per 3 min, **never** mid-checkout — Gemini 1★ trap. Disabled V1, flag `adsEnabled=false`
+- [ ] **9.1** IAP catalog (Play Billing 8.3.0 `billing.properties:8` + `CodelessIAPStoreListener` pattern `CODE_ANALYSIS_REVERSE_ENGINEERING.md:29` rebuild via Unity IAP): `Gems100 $0.99/₹89`, `Gems500 $4.99/₹449 +50 bonus`, `RestockBundle $1.99` (intent moment when shelf empty — 30-40% lift), `Starter Pack $1.99`, `Premium Unlock $2.99` (replaces No Ads — unlocks decor/speed), `Season Pass $4.99/mo` skip v1 (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:472`)
+- [ ] **9.2** Placements: IAP store + **bundled at intent moments** (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:467`). Cosmetic-first 58% revenue lever → decor/photo mode (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:468`) — 13% share installs. No ad placements to avoid
+- [ ] **9.3** **REMOVED — No rewarded ads:** Do NOT implement rewarded (speed van/double coins/offline double via ads). If speed needed, gate behind gems/IAP only. No mediation SDK
+- [ ] **9.4** **REMOVED — No interstitial ads:** No interstitial every 3rd EOD, no cap logic. Flag `adsEnabled=false` permanent, no `AD_ID`/`ACCESS_ADSERVICES` permissions (`CODE_ANALYSIS_REVERSE_ENGINEERING.md:83` removal saves ~30M + 865 yandex smali)
 - [ ] **9.5** LiveOps: Remote economy + events `Weekend Rush 2× spawn`, `Spoilage Week`, `Festival kirana/konbini decor`, Holidays (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:491`), 30-day seasons (add Month5 `RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:548`)
-- [ ] **9.6** Push: FCM tied to game-state (shelf empty, offline ready) not spam (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:494`)
-- [ ] **9.7** Compliance: Play Billing no alternative billing, GDPR/COPPA/CCPA, 3+ Families, AD_ID only if ads re-enabled (`CODE_ANALYSIS_REVERSE_ENGINEERING.md:83`)
+- [ ] **9.6** Push: FCM tied to game-state (shelf empty, offline ready) not spam (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:494`) — no ad push
+- [ ] **9.7** Compliance: Play Billing no alternative billing, GDPR/COPPA/CCPA, 3+ Families. **Do NOT add** `AD_ID` permissions (`CODE_ANALYSIS_REVERSE_ENGINEERING.md:83`)
 
-**Exit:** Test purchase gems→speed delivery works, offline double stub, no ads in build, Remote Config event flips without update.
+**Exit:** Test purchase gems→speed delivery via gems works, no ads SDK in build (verify `applovin` 0 hits, `AD_ID` absent), Remote Config event flips without update.
 
 ---
 
@@ -216,7 +216,7 @@ Basis order: **0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10** 
 - [ ] **10.1** Balance: Remote Config tuning `spawn 3→15/min`, `patience 30→60s`, `basket 1-5`, `thief 1%` (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:295`), A/B price points
 - [ ] **10.2** Polish: DOTween all UI, haptics, 2× speed toggle, smooth joystick+dash, colorblind, localization EN/HI→ES/PT/ID/JP, photo mode 13% share installs (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:468`)
 - [ ] **10.3** QA NFR: 60fps profile p95 SD660, AAB <100MB, <5s cold, <10%/h, crash-free >99.5% (`CODE_ANALYSIS_REVERSE_ENGINEERING.md:98` gaps closed). Test 20 devices lab
-- [ ] **10.4** Traps audit: no wrong-shelf, no stuck cleaner (repro corners), no interstitial mid-checkout, carry 1→3 feels good (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:322`)
+- [ ] **10.4** Traps audit: no wrong-shelf, no stuck cleaner (repro corners), carry 1→3 feels good (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:322`) — verify no ads SDK present
 - [ ] **10.5** Soft Launch: India+PH 5K users (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:542`), analytics review D1/D7 funnel, monetization A/B 30-40% lift (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:544`)
 - [ ] **10.6** Global: release Play Console + App Store, ASO `Supermarket/Store Simulator/Tycoon` (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:72`), TikTok ASMR shelving, Tier3-5 Hypermarket→Empire 20 SKUs, kirana/konbini theme unlock
 - [ ] **10.7** Risks check (`RETAIL_STORE_MANAGEMENT_GAME_RESEARCH.md:573`): Unity pricing fallback Godot, clone crowding via kirana moat, CPI <$0.50, grind wall via FTUE

@@ -6,7 +6,7 @@ Inspired by XGame `Manage Retail Store` (4.4★ 10M+). This repo is a **clean in
 - **Engine:** Unity 2022.3.67f2 URP, C#10, Addressables, UGUI/UI Toolkit, DOTween, Cinemachine, NavMesh
 - **Art:** Blender low-poly + Mixamo (1K tex, <100K tris, <50 draws, occlusion)
 - **Backend (never blocks):** Firebase 13.6.0 / PlayFab — offline-first JSON + PlayerPrefs primary, 8h cap
-- **Monetization V1:** IAP only (no ads), Play Billing 8.3.0
+- **Monetization:** IAP only — **NO ads library** (no MAX/LevelPlay/AdMob), Play Billing 8.3.0 only. No `AD_ID` permissions
 
 ## Project Plan
 See [`PROJECT_PLAN.md`](./PROJECT_PLAN.md) — 11 chunks (0 Foundation → 10 Launch), basis-first order.
