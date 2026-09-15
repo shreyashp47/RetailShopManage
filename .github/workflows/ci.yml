@@ -1,0 +1,44 @@
+name: CI — RetailShopManage
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Validate project structure (no editor)
+        run: |
+          echo "Checking PROJECT_PLAN.md chunks..."
+          test -f PROJECT_PLAN.md
+          test -f DECISIONS.md
+          test -f unity/ProjectSettings/ProjectVersion.txt
+          grep -q "2022.3.67f2" unity/ProjectSettings/ProjectVersion.txt
+          test -f unity/Packages/manifest.json
+          echo "Scaffold OK"
+      - name: Check no ads SDK
+        run: |
+          ! grep -r "MaxSdk" unity/ || (echo "AD SDK found!" && exit 1)
+          ! grep -r "AD_ID" unity/ || (echo "AD_ID found!" && exit 1)
+          echo "No ads SDK — OK (DECISIONS.md:4 adsEnabled=false)"
+      - name: AAB size gate placeholder
+        run: |
+          echo "AAB <100MB core (PROJECT_PLAN.md:18 NFR) — checked on Unity Cloud Build"
+          # TODO: CHUNK 0.7 Unity Cloud Build + Test Lab SD660 matrix
+
+  # TODO CHUNK 0.7: Uncomment when Unity 2022.3.67f2 editor available in GameCI
+  # build:
+  #   runs-on: ubuntu-latest
+  #   container: unityci/editor:2022.3.67f2-android-3
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: game-ci/unity-builder@v4
+  #       with:
+  #         targetPlatform: Android
+  #         buildName: RetailShopManage
+  #     - uses: game-ci/unity-test-runner@v4
